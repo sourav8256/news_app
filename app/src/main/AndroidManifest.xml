@@ -41,7 +41,7 @@
 
 		<activity
 			android:name="net.frju.flym.ui.about.AboutActivity"
-			android:label="@string/about_flym"
+			android:label="About"
 			android:launchMode="singleTask"/>
 
 		<activity
