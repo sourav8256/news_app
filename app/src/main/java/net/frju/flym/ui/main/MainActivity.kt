@@ -21,6 +21,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.arch.lifecycle.Observer
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -47,6 +48,7 @@ import net.fred.feedex.R
 import net.frju.flym.App
 import net.frju.flym.data.entities.Feed
 import net.frju.flym.data.entities.FeedWithCount
+import net.frju.flym.data.entities.SearchFeedResult
 import net.frju.flym.data.utils.PrefUtils
 import net.frju.flym.service.AutoRefreshJobService
 import net.frju.flym.ui.about.AboutActivity
@@ -79,6 +81,7 @@ import java.net.URL
 import java.util.Date
 
 
+
 class MainActivity : AppCompatActivity(), MainNavigator, AnkoLogger {
 
     companion object {
@@ -102,10 +105,47 @@ class MainActivity : AppCompatActivity(), MainNavigator, AnkoLogger {
     private val feedGroups = mutableListOf<FeedGroup>()
     private val feedAdapter = FeedAdapter(feedGroups)
 
+	private val GNEWS_TOPIC_NAME = intArrayOf(R.string.google_news_top_stories, R.string.google_news_world, R.string.google_news_business, R.string.google_news_science_technology, R.string.google_news_entertainment, R.string.google_news_sports, R.string.google_news_health)
+	private val GNEWS_TOPIC_CODE = arrayOf("", "WORLD", "BUSINESS", "SCITECH", "ENTERTAINMENT", "SPORTS", "HEALTH")
+
+
+	private fun generateLink(index: Int): String {
+				@Suppress("DEPRECATION")
+				val link = if (GNEWS_TOPIC_CODE[index].isNotEmpty())
+					"https://news.google.com/news/rss/headlines/section/topic/${GNEWS_TOPIC_CODE[index]}?ned=${this.resources.configuration.locale.language}"
+				else
+					"https://news.google.com/news/rss/?ned=${this.resources.configuration.locale.language}"
+
+				//SearchFeedResult(link, context.getString(name))
+				return link
+			}
+
 	override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
+
+		// we need to check if the app is running for the first time
+
+		val prefs = this.getSharedPreferences("in.springpebbles.newstimes.prefs", 0)
+		val init = prefs!!.getBoolean("INIT", true)
+
+		if(init) {
+
+			this.doAsync {
+				App.db.feedDao().insert(Feed(link = generateLink(0), title = getString(GNEWS_TOPIC_NAME[0])))
+				App.db.feedDao().insert(Feed(link = generateLink(1), title = getString(GNEWS_TOPIC_NAME[1])))
+				App.db.feedDao().insert(Feed(link = generateLink(2), title = getString(GNEWS_TOPIC_NAME[2])))
+				App.db.feedDao().insert(Feed(link = generateLink(3), title = getString(GNEWS_TOPIC_NAME[3])))
+				App.db.feedDao().insert(Feed(link = generateLink(4), title = getString(GNEWS_TOPIC_NAME[4])))
+				App.db.feedDao().insert(Feed(link = generateLink(5), title = getString(GNEWS_TOPIC_NAME[5])))
+				App.db.feedDao().insert(Feed(link = generateLink(6), title = getString(GNEWS_TOPIC_NAME[6])))
+			}
+
+			val editor = prefs!!.edit()
+			editor.putBoolean("INIT", false)
+			editor.apply()
+		}
 
         more.onClick {
             it?.let {
@@ -114,8 +154,8 @@ class MainActivity : AppCompatActivity(), MainNavigator, AnkoLogger {
                     setOnMenuItemClickListener {
                         when (it.itemId) {
 							R.id.reorder -> startActivity<FeedListEditActivity>()
-							R.id.import_feeds -> pickOpml()
-							R.id.export_feeds -> exportOpml()
+							//R.id.import_feeds -> pickOpml()
+							//R.id.export_feeds -> exportOpml()
 							R.id.menu_entries__about -> goToAboutMe()
 							R.id.menu_entries__settings -> goToSettings()
                         }
@@ -168,7 +208,7 @@ class MainActivity : AppCompatActivity(), MainNavigator, AnkoLogger {
                     closeDrawer()
                 }
 
-				feedAdapter.onFeedLongClick { view, feedWithCount ->
+				/*feedAdapter.onFeedLongClick { view, feedWithCount ->
                     PopupMenu(this, view).apply {
                         setOnMenuItemClickListener { item ->
                             when (item.itemId) {
@@ -241,7 +281,7 @@ class MainActivity : AppCompatActivity(), MainNavigator, AnkoLogger {
 
                         show()
                     }
-                }
+                }*/
             }
         })
 
@@ -263,13 +303,13 @@ class MainActivity : AppCompatActivity(), MainNavigator, AnkoLogger {
                             .setNegativeButton(android.R.string.no, null)
                             .show()
                 } else {
-                    AlertDialog.Builder(this)
+                    /*AlertDialog.Builder(this)
                             .setTitle(R.string.welcome_title)
                             .setPositiveButton(android.R.string.yes) { _, _ ->
                                 FeedSearchDialog(this).show()
                             }
                             .setNegativeButton(android.R.string.no, null)
-                            .show()
+                            .show()*/
                 }
             } else {
                 closeDrawer()

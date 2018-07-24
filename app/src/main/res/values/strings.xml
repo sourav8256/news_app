@@ -2,8 +2,8 @@
 <resources>
 
     <!-- GENERAL -->
-    <string name="app_name">Flym</string>
-    <string name="about_flym">About Flym</string>
+    <string name="app_name">News Times</string>
+    <string name="about_flym">About News Times</string>
     <string name="welcome_title">Welcome to Flym. Would you like to add one feed?</string>
     <string name="welcome_title_with_opml_import">Would you like to import previous Flym feeds?</string>
     <string name="cannot_find_feeds">No feeds has been found</string>
@@ -17,7 +17,7 @@
     <string name="flym_feeds">Flym feeds</string>
     <string name="error">Error</string>
     <string name="network_error">The network is not set up</string>
-    <string name="drawer_explanation">Welcome!\n\nLong press on the feeds to see options ▼</string>
+    <string name="drawer_explanation">Welcome!\n\nSelect the options below to choose a category ▼</string>
     <string name="drawer_fetch_error_explanation">Some of your feeds did not refresh correctly ▼</string>
 
     <!-- FEEDS -->
